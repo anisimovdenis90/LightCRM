@@ -52,7 +52,7 @@ angular.module('app')
                     senderName: $rootScope.currentProfile.firstname + " " + $rootScope.currentProfile.lastname,
                     recipientName: $scope.currentChat.recipientName,
                     content: $scope.messageText,
-                    timestamp: $filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss')
+                    timestamp: $filter('date')(new Date(),"yyyy-MM-dd'T'HH:mm:ss.sssZ")
                 };
                 chatService.send('/app/chat', $scope.newMessage);
                 $scope.messageText = "";
@@ -132,7 +132,6 @@ angular.module('app')
             $scope.getChatById(chatId, recipientId);
         };
 
-        // $scope.getProfile();
         $scope.subscribe();
         $scope.getMessages($scope.currentChat.senderId, $scope.currentChat.recipientId);
 });

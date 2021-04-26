@@ -1,15 +1,12 @@
 package ru.lightcrm.controllers;
 
-import java.util.HashSet;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 import ru.lightcrm.controllers.interfaces.StaffUnitController;
 import ru.lightcrm.entities.dtos.StaffUnitDto;
 import ru.lightcrm.services.interfaces.StaffUnitService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +21,6 @@ public class StaffUnitControllerImpl implements StaffUnitController {
 
     @Override
     public StaffUnitDto saveStaffUnit(StaffUnitDto staffUnitDto) {
-        staffUnitDto.setId(null);
         return staffUnitService.saveOrUpdate(staffUnitDto);
     }
 
@@ -36,7 +32,6 @@ public class StaffUnitControllerImpl implements StaffUnitController {
 
     @Override
     public void deleteStaffUnitById(Long id) {
-
         staffUnitService.deleteById(id);
     }
 }

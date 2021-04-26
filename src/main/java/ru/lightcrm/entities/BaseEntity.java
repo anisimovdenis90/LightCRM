@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 /**
- * Содержит общий для всех сущностей id в отдельный класс
+ * Содержит общий для всех сущностей id
  * Нужно, чтобы с помощью рефлекшена заполнить SearchItemDto
  */
 @Data

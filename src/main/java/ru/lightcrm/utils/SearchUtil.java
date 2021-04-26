@@ -1,5 +1,6 @@
 package ru.lightcrm.utils;
 
+import lombok.experimental.UtilityClass;
 import ru.lightcrm.entities.SearchableEntity;
 import ru.lightcrm.repositories.SearchableEntityRepository;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class SearchUtil {
 
     private static final Map<String, Object> SEARCHABLE_REPOSITORIES_BY_ENTITY_NAME_MAP = new HashMap<>();
@@ -20,20 +22,21 @@ public class SearchUtil {
         LOCALIZED_ENTITY_NAME.put("Task", "Задача");
         LOCALIZED_ENTITY_NAME.put("Company", "Компания");
         LOCALIZED_ENTITY_NAME.put("Contact", "Контакт");
+        LOCALIZED_ENTITY_NAME.put("Comment", "Комментарий");
+        LOCALIZED_ENTITY_NAME.put("Department", "Департамент");
+        LOCALIZED_ENTITY_NAME.put("StaffUnit", "Должность");
+        LOCALIZED_ENTITY_NAME.put("User", "Пользователь");
     }
 
-    private SearchUtil() {
-    }
-
-    public static Map<String, Object> getRepByEntityNameMap() {
+    public Map<String, Object> getRepByEntityNameMap() {
         return SEARCHABLE_REPOSITORIES_BY_ENTITY_NAME_MAP;
     }
 
-    public static Map<String, String> getUriByEntityClassMap() {
+    public Map<String, String> getUriByEntityClassMap() {
         return URI_BY_ENTITY_CLASS_MAP;
     }
 
-    public static String getLocalizedEntityName(String entityName) {
+    public String getLocalizedEntityName(String entityName) {
         for (Map.Entry<String, String> entry : LOCALIZED_ENTITY_NAME.entrySet()) {
             if (entityName.startsWith(entry.getKey())) {
                 return entry.getValue();
@@ -46,14 +49,14 @@ public class SearchUtil {
      * На всякий случай проверка на null, хотя такого быть не должно
      *
      */
-    public static List<SearchableEntityRepository<?, ?>> getSearchableEntityRepositories() {
+    public List<SearchableEntityRepository<?, ?>> getSearchableEntityRepositories() {
         return SEARCHABLE_REPOSITORIES_BY_ENTITY_NAME_MAP.values().stream()
                 .filter(Objects::nonNull)
                 .map(rep -> (SearchableEntityRepository<?, ?>) rep)
                 .collect(Collectors.toList());
     }
 
-    public static String getUrl(SearchableEntity entity) {
+    public String getUrl(SearchableEntity entity) {
         for (Map.Entry<String, String> entry : URI_BY_ENTITY_CLASS_MAP.entrySet()) {
             if (entity.getClass().getSimpleName().startsWith(entry.getKey())) {
                 return entry.getValue();
@@ -67,7 +70,7 @@ public class SearchUtil {
      *
      * @param notFormatUrl - url, указанный в аннотации SearchableController
      */
-    public static String formatUrl(String notFormatUrl) {
+    public String formatUrl(String notFormatUrl) {
         if (notFormatUrl.isBlank()) {
             return null;
         }

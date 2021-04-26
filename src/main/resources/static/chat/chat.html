@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="md-list-item-text" layout="column">
                                         <h3><b>{{currentChat.recipientName}}</b></h3>
-                                        <h4 class="chat_date"><i>{{currentChat.lastMessage.timestamp}}</i></h4>
+                                        <h4 class="chat_date"><i>{{currentChat.lastMessage.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</i></h4>
                                         <p>{{currentChat.lastMessage.content}}</p>
                                     </div>
                                 </div>
@@ -78,7 +78,7 @@
                                     </div>
                                     <div class="md-list-item-text" layout="column">
                                         <h3><b>{{c.recipientName}}</b></h3>
-                                        <h4 class="chat_date"><i>{{c.lastMessage.timestamp}}</i></h4>
+                                        <h4 class="chat_date"><i>{{c.lastMessage.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</i></h4>
                                         <p>{{c.lastMessage.content}}</p>
                                         <p ng-if="c.unreadMessageCount>0" style="color:red;">Непрочитано
                                             ({{c.unreadMessageCount}})</p>
@@ -92,7 +92,7 @@
                 </div>
                 <div class="mesgs">
                     <div class="msg_history" scroll="messages">
-                        <div ng-repeat="m in messages | orderBy: 'timestamp' | filter:searchMessageText">
+                        <div ng-repeat="m in messages | orderBy: 'm.timestamp' | filter:searchMessageText">
                             <div class="incoming_msg" ng-if="currentChat.senderId!=m.senderId">
                                 <div class="incoming_msg_img">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"
@@ -116,14 +116,14 @@
                                 <div class="received_msg">
                                     <div class="received_withd_msg">
                                         <p>{{m.content}}</p>
-                                        <span class="time_date">{{m.timestamp}}</span>
+                                        <span class="time_date">{{m.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="outgoing_msg" ng-if="currentChat.senderId==m.senderId">
                                 <div class="sent_msg">
                                     <p>{{m.content}}</p>
-                                    <span class="time_date">{{m.timestamp}}</span>
+                                    <span class="time_date">{{m.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}</span>
                                 </div>
                             </div>
                         </div>

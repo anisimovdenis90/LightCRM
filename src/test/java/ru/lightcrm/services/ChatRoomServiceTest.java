@@ -77,8 +77,8 @@ public class ChatRoomServiceTest {
         Assertions.assertEquals(CHAT_ID, chatRoomDto.getChatId());
     }
 
-    private List<ChatMessage> generateMockMessage() {
-        return List.of(ChatMessage.builder()
+    private Optional<ChatMessage> generateMockMessage() {
+        return Optional.of(ChatMessage.builder()
                 .id(1L)
                 .chatId(CHAT_ID)
                 .senderId(SENDER_ID)

@@ -9,8 +9,8 @@ import ru.lightcrm.utils.SearchUtil;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * Класс для обработки аннотации SearchableController, применяемой для контролеров поисковых сущностей
- * А также сохранения в мапу репозитории поисковых сущностей, наследующих класс SearchableEntityRepository
+ * Класс для обработки аннотации SearchableEntitiesController, SearchableEntityController
+ * Также сохранения в мапу репозитории поисковых сущностей, наследующих класс SearchableEntityRepository
  */
 @Component
 public class SearchableRepositoriesRefreshContextListener implements ApplicationListener<ContextRefreshedEvent> {

@@ -1,6 +1,5 @@
 package ru.lightcrm.entities.dtos;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -49,7 +48,6 @@ public class ChatMessageDto {
     private String content;
 
     @ApiModelProperty(notes = "Дата отправки сообщения", required = true, position = 8)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonProperty("timestamp")
     private OffsetDateTime timestamp;

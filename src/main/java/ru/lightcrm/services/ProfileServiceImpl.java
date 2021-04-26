@@ -106,19 +106,16 @@ public class ProfileServiceImpl implements ProfileService {
             String message = bindingResult.getAllErrors().stream()
                     .map(ObjectError::getDefaultMessage)
                     .collect(Collectors.joining(System.lineSeparator()));
-            log.warn(message);
             throw new ValidationException(message);
         }
 
         if (!systemUserDto.getPassword().equals(systemUserDto.getConfirmationPassword())) {
             String message = "Пароль и подтверждающий пароль не совпадают";
-            log.warn(message);
             throw new ValidationException(message);
         }
 
         if (userService.isPresent(systemUserDto.getLogin())) {
             String message = String.format("Пользователь с логином: %s уже существует", systemUserDto.getLogin());
-            log.warn(message);
             throw new ValidationException(message);
         }
 
@@ -142,6 +139,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDto findByLogin(String login) {
-        return new ProfileDto(profileRepository.findByLogin(login).orElseThrow(() -> new ResourceNotFoundException(String.format("Профиль с логином %s отсутствует", login))));
+        return new ProfileDto(profileRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Профиль с логином %s отсутствует", login))));
     }
 }

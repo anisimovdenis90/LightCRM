@@ -13,7 +13,7 @@
                         <h4>{{s.entityName}}</h4>
                     </div>
                     <div search-result="{{s.indexData}}" class="searched_element_content">
-                        <h4>{{s.indexData}}</h4>
+                        <h4 ng-bind-html="highlight(s.indexData)"></h4>
                     </div>
                 </div>
                 <md-divider ng-if="!$last"></md-divider>

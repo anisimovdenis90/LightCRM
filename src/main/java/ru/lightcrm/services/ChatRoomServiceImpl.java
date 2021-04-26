@@ -2,7 +2,6 @@ package ru.lightcrm.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.lightcrm.entities.ChatMessage;
 import ru.lightcrm.entities.ChatRoom;
 import ru.lightcrm.entities.dtos.ChatMessageDto;
 import ru.lightcrm.entities.dtos.ChatRoomDto;
@@ -58,7 +57,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public List<ChatRoomDto> getChatsDto(Long senderId) {
         List<ChatRoomDto> chatRoomDtoList = chatRoomRepository.findAllBySenderId(senderId).stream().map(ChatRoomDto::new).collect(Collectors.toList());
         for (ChatRoomDto chatRoomDto : chatRoomDtoList) {
-            ChatMessageDto chatMessageDto = getLatestChatMessage(chatRoomDto.getChatId()).map(ChatMessageDto::new)
+            ChatMessageDto chatMessageDto = chatMessageRepository.findByChatIdAndMaxTimestamp(chatRoomDto.getChatId()).map(ChatMessageDto::new)
                     .orElse(null);
             chatRoomDto.setLastMessage(chatMessageDto);
             chatRoomDto.setRecipientName(getRecipientNameFromProfileById(chatRoomDto.getRecipientId()));
@@ -72,7 +71,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         ChatRoomDto chatRoomDto = chatRoomRepository.findByChatIdAndRecipientId(chatId, recipientId).map(ChatRoomDto::new)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Комната с id %s отсутствует", chatId)));
         chatRoomDto.setRecipientName(getRecipientNameFromProfileById(recipientId));
-        ChatMessageDto chatMessageDto = getLatestChatMessage(chatRoomDto.getChatId()).map(ChatMessageDto::new)
+        ChatMessageDto chatMessageDto = chatMessageRepository.findByChatIdAndMaxTimestamp(chatRoomDto.getChatId()).map(ChatMessageDto::new)
                 .orElse(null);
         chatRoomDto.setLastMessage(chatMessageDto);
         return chatRoomDto;
@@ -81,10 +80,5 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private String getRecipientNameFromProfileById(Long id) {
         ProfileMiniDto profileDto = profileService.findMiniDtoById(id);
         return String.format("%s %s", profileDto.getFirstname(), profileDto.getLastname());
-    }
-
-    private Optional<ChatMessage> getLatestChatMessage(String chatId) {
-        List<ChatMessage> foundMessage = chatMessageRepository.findByChatIdAndMaxTimestamp(chatId);
-        return foundMessage.isEmpty() ? Optional.empty() : Optional.of(foundMessage.get(foundMessage.size() - 1));
     }
 }

@@ -9,7 +9,7 @@ import ru.lightcrm.entities.dtos.SearchItemDto;
 import ru.lightcrm.exceptions.LightCrmError;
 import ru.lightcrm.services.interfaces.SearchableEntityService;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class SearchControllerIml implements SearchController {
 
     @Override
     public ResponseEntity<?> getSearchResult(String searchString) {
-        List<SearchItemDto> searchResults = searchableEntityService.getSearchResults(searchString);
+        Set<SearchItemDto> searchResults = searchableEntityService.getSearchResults(searchString);
         return searchResults.isEmpty()
                 ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LightCrmError(HttpStatus.NOT_FOUND.value(), "Ничего не найдено"))
                 : ResponseEntity.ok(searchResults);

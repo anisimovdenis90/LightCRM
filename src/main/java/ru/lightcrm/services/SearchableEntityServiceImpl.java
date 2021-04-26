@@ -7,9 +7,7 @@ import ru.lightcrm.repositories.SearchableEntityRepository;
 import ru.lightcrm.services.interfaces.SearchableEntityService;
 import ru.lightcrm.utils.SearchUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SearchableEntityServiceImpl implements SearchableEntityService {
@@ -17,37 +15,40 @@ public class SearchableEntityServiceImpl implements SearchableEntityService {
     /**
      * Вызывает общий метод поиска по фразе репозиториев всех поисковых сущностей
      *
-     * @param searchIndex - фраза для поиска
+     * @param searchString - фраза для поиска
      * @return - список результатов
      */
     @Override
-    public List<SearchItemDto> getSearchResults(String searchIndex) {
-        if (searchIndex.isBlank()) {
-            return Collections.emptyList();
+    public Set<SearchItemDto> getSearchResults(String searchString) {
+        if (searchString.isBlank()) {
+            return Collections.emptySet();
         }
-//        if (searchIndex.trim().contains(" ")) {
-//            return getSearchResultSplit(searchIndex);
+//        if (searchString.trim().contains(" ")) {
+//            return getSearchResultSplit(searchString);
 //        }
-        List<SearchItemDto> foundList = new ArrayList<>();
+        Set<SearchItemDto> foundSet = new HashSet<>();
         for (SearchableEntityRepository<?, ?> rep : SearchUtil.getSearchableEntityRepositories()) {
-            rep.searchBySearchIndexLike(searchIndex).stream()
+            rep.searchBySearchIndexLike(searchString).stream()
                     .filter(o -> o instanceof SearchableEntity)
                     .map(o -> (SearchableEntity) o)
                     .map(SearchItemDto::new)
-                    .forEach(foundList::add);
+                    .forEach(foundSet::add);
         }
-        return foundList;
+        return foundSet;
     }
 
     /**
      * Для поиска по фразам, разделенным пробелом
-     * Не тестировал
      */
-    private List<SearchItemDto> getSearchResultSplit(String searchIndex) {
-        List<SearchItemDto> foundList = new ArrayList<>();
-        for (String searchText : searchIndex.split(" ")) {
-            foundList.addAll(getSearchResults(searchText.trim()));
+    private Set<SearchItemDto> getSearchResultSplit(String searchString) {
+        List<String> searchStrings = new ArrayList<>();
+        Set<SearchItemDto> foundSet = new HashSet<>();
+        for (String searchText : searchString.split(" ")) {
+            String trim = searchText.trim();
+            searchStrings.add(trim);
+            foundSet.addAll(getSearchResults(trim));
         }
-        return foundList;
+        foundSet.removeIf(searchItemDto -> !searchStrings.stream().allMatch(s -> searchItemDto.getIndexData().toLowerCase().contains(s.toLowerCase())));
+        return foundSet;
     }
 }

@@ -111,7 +111,7 @@
     }
 })();
 
-angular.module('app').controller('indexController', function ($scope, $rootScope, $http, $location, $localStorage, $mdDialog, chatService) {
+angular.module('app').controller('indexController', function ($scope, $rootScope, $http, $location, $localStorage, $mdDialog, $sce, chatService) {
 
     const contextPath = 'http://localhost:8180/app';
     let isProfilePresent = false;
@@ -148,6 +148,7 @@ angular.module('app').controller('indexController', function ($scope, $rootScope
             $scope.searchResults = null;
             return;
         }
+        $rootScope.searchText = $scope.searchText
         $scope.searchResults = null;
         $http({
             url: contextPath + '/api/v1/search',
@@ -173,6 +174,10 @@ angular.module('app').controller('indexController', function ($scope, $rootScope
             url: contextPath + url,
             method: 'GET'
         });
+    };
+
+    $scope.highlight = function (text) {
+        return $sce.trustAsHtml(text.replace(new RegExp($rootScope.searchText, 'gi'), '<span class="highlight">$&</span>'));
     };
 
     $scope.currentNavItem = $location.path();
