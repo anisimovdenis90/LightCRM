@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 @UtilityClass
 public class SearchUtil {
 
@@ -49,10 +50,10 @@ public class SearchUtil {
      * На всякий случай проверка на null, хотя такого быть не должно
      *
      */
-    public List<SearchableEntityRepository<?, ?>> getSearchableEntityRepositories() {
+    public <E extends SearchableEntity, ID> List<SearchableEntityRepository<E, ID>> getSearchableEntityRepositories() {
         return SEARCHABLE_REPOSITORIES_BY_ENTITY_NAME_MAP.values().stream()
                 .filter(Objects::nonNull)
-                .map(rep -> (SearchableEntityRepository<?, ?>) rep)
+                .map(rep -> (SearchableEntityRepository<E, ID>) rep)
                 .collect(Collectors.toList());
     }
 
@@ -66,9 +67,9 @@ public class SearchUtil {
     }
 
     /**
-     * Оконцовывает url символом / при необходимости
+     * При необходимости добавляет символ '/' к url
      *
-     * @param notFormatUrl - url, указанный в аннотации SearchableController
+     * @param notFormatUrl - url сущности, указанный в аннотации SearchableController
      */
     public String formatUrl(String notFormatUrl) {
         if (notFormatUrl.isBlank()) {
