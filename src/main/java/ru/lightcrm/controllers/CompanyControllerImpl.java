@@ -10,7 +10,6 @@ import ru.lightcrm.entities.dtos.ContactDto;
 import ru.lightcrm.services.interfaces.CompanyService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,12 +19,17 @@ public class CompanyControllerImpl implements CompanyController {
 
     @GetMapping
     public List<CompanyDto> getCompanyContent() {
-        return companyService.findAllDTO();
+        return companyService.findDtoAll();
+    }
+
+    @Override
+    public List<CompanyDto> getManagedCompanies(Long id) {
+        return companyService.findByManagerId(id);
     }
 
     @Override
     public CompanyDto getCompany(Long id) {
-        return companyService.findById(id);
+        return companyService.findDtoById(id);
     }
 
     @Override

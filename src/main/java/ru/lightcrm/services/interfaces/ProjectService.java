@@ -8,17 +8,17 @@ import java.util.Map;
 
 public interface ProjectService {
 
-    List<ProjectDto> findAll(Map<String, String> params);
+    List<ProjectDto> findDtoAll(Map<String, String> params);
 
-    Project findEntityById(Long id);
+    Project findById(Long id);
 
-    ProjectDto findById(Long id);
+    ProjectDto findDtoById(Long id);
 
-    ProjectDto findOneByName(String name);
+    ProjectDto findDtoByName(String name);
 
-    List<ProjectDto> findByManagerId(Long id);
+    List<ProjectDto> findDtoByManagerId(Long id);
 
-    ProjectDto saveOrUpdate(ProjectDto projectDTO);
+    ProjectDto saveOrUpdateFromDto(ProjectDto projectDTO);
 
     void deleteById(Long id);
 }

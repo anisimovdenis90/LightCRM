@@ -2,24 +2,26 @@ package ru.lightcrm.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import ru.lightcrm.entities.*;
+import ru.lightcrm.entities.Department;
+import ru.lightcrm.entities.Profile;
+import ru.lightcrm.entities.StaffUnit;
+import ru.lightcrm.entities.User;
 import ru.lightcrm.entities.dtos.ProfileDto;
 import ru.lightcrm.entities.dtos.ProfileFullDto;
 import ru.lightcrm.entities.dtos.ProfileMiniDto;
 import ru.lightcrm.entities.dtos.SystemUserDto;
 import ru.lightcrm.exceptions.ResourceNotFoundException;
 import ru.lightcrm.repositories.ProfileRepository;
-import ru.lightcrm.services.interfaces.DepartmentService;
-import ru.lightcrm.services.interfaces.ProfileService;
-import ru.lightcrm.services.interfaces.StaffUnitService;
-import ru.lightcrm.services.interfaces.UserService;
+import ru.lightcrm.services.interfaces.*;
 
 import javax.validation.ValidationException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +30,42 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
-    private final UserService userService;
-    private final DepartmentService departmentService;
-    private final PasswordEncoder passwordEncoder;
-    private final StaffUnitService staffUnitService;
+    private UserService userService;
+    private DepartmentService departmentService;
+    private PasswordEncoder passwordEncoder;
+    private StaffUnitService staffUnitService;
+    private PriorityService priorityService;
+    private CommentService commentService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setDepartmentService(DepartmentService departmentService) {
+        this.departmentService = departmentService;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setStaffUnitService(StaffUnitService staffUnitService) {
+        this.staffUnitService = staffUnitService;
+    }
+
+    @Autowired
+    public void setPriorityService(PriorityService priorityService) {
+        this.priorityService = priorityService;
+    }
+
+    @Autowired
+    public void setCommentService(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     @Override
     public Profile findById(Long id) {
@@ -52,7 +86,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public List<ProfileDto> findDtoAll() {
-        return profileRepository.findAll().stream().map(ProfileDto::new).collect(Collectors.toList());
+        return profileRepository.findAll().stream().map(ProfileDto::new).sorted(Comparator.comparing(ProfileDto::getId)).collect(Collectors.toList());
     }
 
     @Override
@@ -130,16 +164,63 @@ public class ProfileServiceImpl implements ProfileService {
                 : null;
 
         Profile newProfile = Profile.createNewProfileForUserRegistration(systemUserDto, newUser, staffUnit, departments);
-
-        userService.saveUser(newUser);
         saveProfile(newProfile);
 
         log.info("Пользователь с логином: {} успешно зарегистрирован", systemUserDto.getLogin());
     }
 
     @Override
-    public ProfileDto findByLogin(String login) {
-        return new ProfileDto(profileRepository.findByLogin(login)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Профиль с логином %s отсутствует", login))));
+    public ProfileDto findDtoByLogin(String login) {
+        return new ProfileDto(findByUserLogin(login));
+    }
+
+    @Override
+    @Transactional
+    public <P extends ProfileMiniDto> void updateProfile(P dto, BindingResult bindingResult) {
+        checkOnErrors(bindingResult);
+        if (dto.getId() == null) {
+            throw new ValidationException("Отсутствует id для обновление профиля");
+        }
+        Profile profile = findById(dto.getId());
+        if (dto instanceof ProfileFullDto) {
+            updateProfileFromFullDto((ProfileFullDto) dto, profile);
+        } else if (dto instanceof ProfileDto) {
+            updateProfileFromDto((ProfileDto) dto, profile);
+        } else {
+            updateProfileFromMiniDto(dto, profile);
+        }
+        saveProfile(profile);
+    }
+
+    private void updateProfileFromMiniDto(ProfileMiniDto profileMiniDto, Profile profile) {
+        profile.setFirstname(profileMiniDto.getFirstname());
+        profile.setLastname(profileMiniDto.getLastname());
+        profile.setMiddlename(profileMiniDto.getMiddlename());
+        profile.setEmploymentDate(profileMiniDto.getEmploymentDate());
+        profile.setStaffUnit(staffUnitService.findByName(profileMiniDto.getStaffUnitName()));
+        profile.setDepartments(profileMiniDto.getDepartmentNames().stream()
+                .map(departmentService::findOneByName).collect(Collectors.toList()));
+    }
+
+    private void updateProfileFromDto(ProfileDto profileDto, Profile profile) {
+        updateProfileFromMiniDto(profileDto, profile);
+        User user = userService.getByUsername(profileDto.getUserLogin());
+        user.setPriorities(profileDto.getPriorities().stream()
+                .map(priorityDto -> priorityService.getById(priorityDto.getId())).collect(Collectors.toSet()));
+        profile.setUser(user);
+    }
+
+    private void updateProfileFromFullDto(ProfileFullDto profileFullDto, Profile profile) {
+        updateProfileFromDto(profileFullDto, profile);
+        profile.setSex(profileFullDto.getSex());
+        profile.setPhone(profileFullDto.getPhone());
+        profile.setEmail(profileFullDto.getEmail());
+        profile.setAbout(profileFullDto.getAbout());
+        profile.setBirthdate(profileFullDto.getBirthdate());
+        profile.setDismissalDate(profileFullDto.getDismissalDate());
+        profile.setComments(profileFullDto.getComments().stream()
+                .map(commentDto -> commentService.findById(commentDto.getId())).collect(Collectors.toList()));
+        profile.setManagedDepartments(profileFullDto.getManagedDepartments().stream()
+                .map(departmentDto -> departmentService.findById(departmentDto.getId())).collect(Collectors.toList()));
     }
 }

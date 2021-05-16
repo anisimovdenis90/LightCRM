@@ -6,8 +6,8 @@ import ru.lightcrm.entities.User;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findByLogin(@NotNull String login);
 
     boolean existsByLogin(@NotNull String login);

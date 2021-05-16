@@ -27,67 +27,44 @@ import java.util.stream.Collectors;
 @JsonRootName("ProfileFullDto")
 public class ProfileFullDto extends ProfileDto {
 
-    @ApiModelProperty(notes = "Пол сотрудника", dataType = "String", example = "М", position = 12)
+    @ApiModelProperty(notes = "Пол сотрудника", dataType = "String", example = "М", position = 13)
     @JsonProperty("sex")
     private String sex;
 
-    @ApiModelProperty(notes = "Номер телефона сотрудника", dataType = "String", example = "89998887766", position = 13)
+    @ApiModelProperty(notes = "Номер телефона сотрудника", dataType = "String", example = "89998887766", position = 14)
     @JsonProperty("phone")
     private String phone;
 
     @Email(message = "Некорректный формат электронной почты сотрудника")
-    @ApiModelProperty(notes = "Электронная почта сотрудника", dataType = "String", example = "ivan@mail.com", position = 14)
+    @ApiModelProperty(notes = "Электронная почта сотрудника", dataType = "String", example = "ivan@mail.com", position = 15)
     @JsonProperty("email")
     private String email;
 
     @Past(message = "Дата рождения сотрудника должна быть раньше настоящего времени")
-    @ApiModelProperty(notes = "Дата рождения сотрудника", dataType = "OffsetDateTime", example = "1990-12-25", position = 15)
+    @ApiModelProperty(notes = "Дата рождения сотрудника", dataType = "OffsetDateTime", example = "1990-12-25", position = 16)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonProperty("birthdate")
     private OffsetDateTime birthdate;
 
-    @ApiModelProperty(notes = "Собственная характеристика сотрудника", dataType = "String", position = 16)
+    @ApiModelProperty(notes = "Собственная характеристика сотрудника", dataType = "String", position = 17)
     @JsonProperty("about")
     private String about;
 
     @PastOrPresent(message = "Дата увольнения должна быть не позже настоящего времени")
-    @ApiModelProperty(notes = "Дата увольнения сотрудника", dataType = "OffsetDateTime", example = "2000-12-25", position = 17)
+    @ApiModelProperty(notes = "Дата увольнения сотрудника", dataType = "OffsetDateTime", example = "2000-12-25", position = 18)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @JsonProperty("dismissalDate")
     private OffsetDateTime dismissalDate;
-
-    // Company
-    @ApiModelProperty(notes = "Компании, курируемые сотрудником", dataType = "List<CompanyDto>", position = 18)
-    @JsonProperty("companyNames")
-    private List<String> companyNames;
 
     // Department
     @ApiModelProperty(notes = "Список отделов, возглавляемых сотрудником", dataType = "List<DepartmentDto>", position = 19)
     @JsonProperty("managedDepartments")
     private List<DepartmentDto> managedDepartments;
 
-    // Project
-    @ApiModelProperty(notes = "Проекты, курируемые сотрудником", dataType = "List<ProjectDto>", position = 20)
-    @JsonProperty("managedProjects")
-    private List<ProjectDto> managedProjects;
-
-    @ApiModelProperty(notes = "Проекты сотрудника", dataType = "List<ProjectDto>", position = 21)
-    @JsonProperty("projects")
-    private List<ProjectDto> projects;
-
-    // Task
-    @ApiModelProperty(notes = "Задачи сотрудника", dataType = "List<TaskDto>", position = 22)
-    @JsonProperty("tasks")
-    private List<TaskDto> tasks;
-
-    @ApiModelProperty(notes = "Задачи, наблюдаемые сотрудником", dataType = "List<TaskDto>", position = 23)
-    @JsonProperty("observedTasks")
-    private List<TaskDto> observedTasks;
-
     // Comment
-    @ApiModelProperty(notes = "Комментарии, оставленные сотрудником", dataType = "List<CommentDto>", position = 24)
+    @ApiModelProperty(notes = "Комментарии, оставленные сотрудником", dataType = "List<CommentDto>", position = 20)
     @JsonProperty("comments")
     private List<CommentDto> comments;
 
@@ -99,12 +76,6 @@ public class ProfileFullDto extends ProfileDto {
         this.birthdate = profile.getBirthdate();
         this.about = profile.getAbout();
         this.dismissalDate = profile.getDismissalDate();
-        // Company
-        //todo мини Dto для компании - companyId + companyName (иначе циклическая ссылка)
-        //временно сделан лист названий компаний
-        this.companyNames = profile.getCompanies() != null
-                ? profile.getCompanies().stream().map(Company::getName).collect(Collectors.toList())
-                : new ArrayList<>();
         // Department
         this.managedDepartments = profile.getManagedDepartments() != null
                 ? profile.getManagedDepartments().stream().map(DepartmentDto::new).collect(Collectors.toList())
@@ -112,20 +83,6 @@ public class ProfileFullDto extends ProfileDto {
         // Comment
         this.comments = profile.getComments() != null
                 ? profile.getComments().stream().map(CommentDto::new).collect(Collectors.toList())
-                : Collections.emptyList();
-        // Project
-        this.managedProjects = profile.getManagedProjects() != null
-                ? profile.getManagedProjects().stream().map(ProjectDto::new).collect(Collectors.toList())
-                : Collections.emptyList();
-        this.projects = profile.getProjects() != null
-                ? profile.getProjects().stream().map(ProjectDto::new).collect(Collectors.toList())
-                : Collections.emptyList();
-        // Task
-        this.tasks = profile.getTasks() != null
-                ? profile.getTasks().stream().map(TaskDto::new).collect(Collectors.toList())
-                : Collections.emptyList();
-        this.observedTasks = profile.getObservedTasks() != null
-                ? profile.getObservedTasks().stream().map(TaskDto::new).collect(Collectors.toList())
                 : Collections.emptyList();
     }
 }

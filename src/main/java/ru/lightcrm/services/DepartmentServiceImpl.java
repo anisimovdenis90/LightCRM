@@ -1,20 +1,15 @@
 package ru.lightcrm.services;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.stereotype.Service;
 import ru.lightcrm.entities.Department;
-import ru.lightcrm.entities.Profile;
 import ru.lightcrm.entities.dtos.DepartmentDto;
 import ru.lightcrm.exceptions.ResourceNotFoundException;
 import ru.lightcrm.repositories.DepartmentRepository;
 import ru.lightcrm.repositories.ProfileRepository;
 import ru.lightcrm.services.interfaces.DepartmentService;
-import ru.lightcrm.services.interfaces.ProfileService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

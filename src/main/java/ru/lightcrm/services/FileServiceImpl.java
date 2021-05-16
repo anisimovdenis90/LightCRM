@@ -1,6 +1,7 @@
 package ru.lightcrm.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +26,18 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
 
+    private static final DateTimeFormatter DTF_SUFFIX_FILENAME = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
     private final FileInfoRepository fileInfoRepository;
     private final FileManagerService fileManagerService;
-    private final ProfileService profileService;
+    private ProfileService profileService;
+
+    @Autowired
+    public void setProfileService(ProfileService profileService) {
+        this.profileService = profileService;
+    }
 
     @Override
-    @Transactional(rollbackFor = {ValidationException.class})
+    @Transactional(rollbackFor = ValidationException.class)
     public FileInfo upload(MultipartFile resource) {
         try {
             String prefixKeyName = generateKeyName(resource.getName());
@@ -41,12 +48,12 @@ public class FileServiceImpl implements FileService {
             fileManagerService.upload(resource.getBytes(), fileKeyName);
             return fileInfo;
         } catch (IOException | NullPointerException e) {
-            throw new ValidationException("Некорректно загружен файл");
+            throw new ValidationException("Некорректно загружен файл: " + resource.getOriginalFilename());
         }
     }
 
     @Override
-    @Transactional(rollbackFor = {ValidationException.class})
+    @Transactional(rollbackFor = ValidationException.class)
     public void uploadPhoto(MultipartFile resource, String login) {
         FileInfo previewFilePhoto;
         try {
@@ -68,16 +75,16 @@ public class FileServiceImpl implements FileService {
     public FileInfo savePreview(MultipartFile origPhotoData) throws IOException {
         try {
             String prefixKeyName = generateKeyName(origPhotoData.getName());
-            String prefix = origPhotoData.getOriginalFilename().substring(0, origPhotoData.getOriginalFilename().lastIndexOf(".")) + "_preview";
+            String prefixName = origPhotoData.getOriginalFilename().substring(0, origPhotoData.getOriginalFilename().lastIndexOf(".")) + "_preview";
             String suffix = getSuffixFromFileName(origPhotoData.getOriginalFilename());
-            String previewName = prefix + "." + suffix;
+            String previewName = prefixName + "." + suffix;
             String previewKeyName = prefixKeyName + "." + suffix;
             long previewSize = fileManagerService.savePreview(origPhotoData.getBytes(), previewKeyName);
             FileInfo previewFileInfo = FileInfo.createNewFileInfo(previewName, previewKeyName, origPhotoData.getContentType(), previewSize);
             previewFileInfo = fileInfoRepository.save(previewFileInfo);
             return previewFileInfo;
         } catch (IOException | NullPointerException e) {
-            throw new IOException("Некорректно загружен файл");
+            throw new IOException("Некорректно загружен файл: " + origPhotoData.getOriginalFilename());
         }
     }
 
@@ -121,7 +128,7 @@ public class FileServiceImpl implements FileService {
     private String generateKeyName(String name) {
         OffsetDateTime now = OffsetDateTime.now();
         return DigestUtils.md5DigestAsHex((name + now).getBytes(StandardCharsets.UTF_8))
-                + "-" + now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"));
+                + "-" + now.format(DTF_SUFFIX_FILENAME);
     }
 
     private String getSuffixFromFileName(String fileName) {

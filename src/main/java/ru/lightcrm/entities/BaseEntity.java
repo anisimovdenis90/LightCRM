@@ -1,10 +1,12 @@
 package ru.lightcrm.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 
 /**
  * Содержит общий для всех сущностей id
@@ -12,7 +14,6 @@ import javax.persistence.*;
  */
 @Data
 @MappedSuperclass
-@AllArgsConstructor
 @NoArgsConstructor
 public abstract class BaseEntity {
 
@@ -21,4 +22,15 @@ public abstract class BaseEntity {
     @Column(name = "id")
     private Long id;
 
+    @CreationTimestamp
+    @Column(name = "create_timestamp")
+    private OffsetDateTime createTimeStamp;
+
+    @UpdateTimestamp
+    @Column(name = "update_timestamp", updatable = false)
+    private OffsetDateTime updateTimeStamp;
+
+    public BaseEntity(Long id) {
+        this.id = id;
+    }
 }

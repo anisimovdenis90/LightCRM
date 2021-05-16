@@ -72,7 +72,7 @@ public class CompanyControllerTest {
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void getCompanyContent() throws Exception {
 
-        given(companyService.findAllDTO()).willReturn(testListCompanyDto);
+        given(companyService.findDtoAll()).willReturn(testListCompanyDto);
 
         mvc.perform(get("/api/v1/companies")
                 .contentType(MediaType.APPLICATION_JSON))

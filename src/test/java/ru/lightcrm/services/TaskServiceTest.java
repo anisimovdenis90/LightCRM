@@ -73,7 +73,7 @@ public class TaskServiceTest {
 
     @Test
     public void findAllTest() {
-        List<TaskDto> taskDTOList = taskService.findAll(new HashMap<>(), null);
+        List<TaskDto> taskDTOList = taskService.findDtoAll(new HashMap<>(), null);
         Assertions.assertNotNull(taskDTOList);
         Assertions.assertEquals(TASK_COUNT, taskDTOList.size());
         Assertions.assertEquals(TASK_NAME + " 1", taskDTOList.get(0).getTitle());
@@ -85,7 +85,7 @@ public class TaskServiceTest {
     public void findByIdTest() {
         Long id = 1L;
 
-        TaskDto taskDTO = taskService.findById(id);
+        TaskDto taskDTO = taskService.findDtoById(id);
         Assertions.assertNotNull(taskDTO);
         Assertions.assertEquals(TASK_NAME + " " + id, taskDTO.getTitle());
         Assertions.assertEquals(TASK_DESCRIPTION + " " + id, taskDTO.getDescription());
@@ -98,7 +98,7 @@ public class TaskServiceTest {
         Long id = 1L;
         final String name = TASK_NAME + " " + id;
 
-        TaskDto taskDTO = taskService.findOneByTitle(name);
+        TaskDto taskDTO = taskService.findDtoByTitle(name);
         Assertions.assertNotNull(taskDTO);
         Assertions.assertEquals(id, taskDTO.getId());
         Assertions.assertEquals(TASK_DESCRIPTION + " " + id, taskDTO.getDescription());
@@ -109,7 +109,7 @@ public class TaskServiceTest {
     public void findByProducerIdTest() {
         Long id = 1L;
 
-        List<TaskDto> taskDTOList = taskService.findByProducerId(id);
+        List<TaskDto> taskDTOList = taskService.findDtoByProducerId(id);
         Assertions.assertNotNull(taskDTOList);
         Assertions.assertEquals(TASK_COUNT, taskDTOList.size());
         for(int i = 0; i < TASK_COUNT; i++)
@@ -120,7 +120,7 @@ public class TaskServiceTest {
     public void findByProducerIdAndTaskStateIdTest() {
         Long producerId = 1L, taskStateId = 1L;
 
-        List<TaskDto> taskDTOList = taskService.findByProducerIdAndTaskStateId(producerId, taskStateId);
+        List<TaskDto> taskDTOList = taskService.findDtoByProducerIdAndTaskStateId(producerId, taskStateId);
         Assertions.assertNotNull(taskDTOList);
         Assertions.assertEquals(TASK_COUNT, taskDTOList.size());
         for(int i = 0; i < TASK_COUNT; i++) {
@@ -133,7 +133,7 @@ public class TaskServiceTest {
     public void findByResponsibleIdTest() {
         Long id = 2L;
 
-        List<TaskDto> taskDTOList = taskService.findByResponsibleId(id);
+        List<TaskDto> taskDTOList = taskService.findDtoByResponsibleId(id);
         Assertions.assertNotNull(taskDTOList);
         Assertions.assertEquals(TASK_COUNT, taskDTOList.size());
         for(int i = 0; i < TASK_COUNT; i++)
@@ -144,7 +144,7 @@ public class TaskServiceTest {
     public void findByResponsibleIdAndTaskStateIdTest() {
         Long responsibleId = 2L, taskStateId = 1L;
 
-        List<TaskDto> taskDTOList = taskService.findByResponsibleIdAndTaskStateId(responsibleId, taskStateId);
+        List<TaskDto> taskDTOList = taskService.findDtoByResponsibleIdAndTaskStateId(responsibleId, taskStateId);
         Assertions.assertNotNull(taskDTOList);
         Assertions.assertEquals(TASK_COUNT, taskDTOList.size());
         for(int i = 0; i < TASK_COUNT; i++) {
@@ -157,7 +157,7 @@ public class TaskServiceTest {
     public void findByProjectIdTest() {
         Long id = 3L;
 
-        List<TaskDto> taskDTOList = taskService.findByProjectId(id);
+        List<TaskDto> taskDTOList = taskService.findDtoByProjectId(id);
         Assertions.assertNotNull(taskDTOList);
         Assertions.assertEquals(TASK_COUNT, taskDTOList.size());
         for(int i = 0; i < TASK_COUNT; i++)
@@ -168,9 +168,9 @@ public class TaskServiceTest {
     public void deleteTest() {
         Long id = 3L;
 
-        Assertions.assertEquals(TASK_COUNT, taskService.findAll(new HashMap<>(), null).size());
+        Assertions.assertEquals(TASK_COUNT, taskService.findDtoAll(new HashMap<>(), null).size());
         taskService.deleteById(id);
-        Assertions.assertEquals(TASK_COUNT - 1, taskService.findAll(new HashMap<>(), null).size());
+        Assertions.assertEquals(TASK_COUNT - 1, taskService.findDtoAll(new HashMap<>(), null).size());
     }
 
     @Test

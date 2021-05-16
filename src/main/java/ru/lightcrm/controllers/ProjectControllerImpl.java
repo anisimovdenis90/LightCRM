@@ -9,7 +9,6 @@ import ru.lightcrm.services.interfaces.ProjectService;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequiredArgsConstructor
 public class ProjectControllerImpl implements ProjectController {
@@ -18,23 +17,23 @@ public class ProjectControllerImpl implements ProjectController {
 
     @Override
     public List<ProjectDto> getAllProjects(Map<String, String> params) {
-        return projectService.findAll(params);
+        return projectService.findDtoAll(params);
     }
 
     @Override
     public ProjectDto getProjectById(Long id) {
-        return projectService.findById(id);
+        return projectService.findDtoById(id);
     }
 
     @Override
     public ProjectDto saveProject(ProjectDto projectDTO) {
         projectDTO.setId(null);
-        return projectService.saveOrUpdate(projectDTO);
+        return projectService.saveOrUpdateFromDto(projectDTO);
     }
 
     @Override
     public ProjectDto updateProject(ProjectDto projectDTO) {
-        return projectService.saveOrUpdate(projectDTO);
+        return projectService.saveOrUpdateFromDto(projectDTO);
     }
 
     @Override

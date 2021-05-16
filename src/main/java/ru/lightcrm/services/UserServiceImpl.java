@@ -2,6 +2,7 @@ package ru.lightcrm.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,13 +17,17 @@ import ru.lightcrm.entities.Role;
 import ru.lightcrm.entities.User;
 import ru.lightcrm.entities.dtos.UserDto;
 import ru.lightcrm.exceptions.ResourceNotFoundException;
-import ru.lightcrm.repositories.ProfileRepository;
 import ru.lightcrm.repositories.UserRepository;
+import ru.lightcrm.services.interfaces.ProfileService;
 import ru.lightcrm.services.interfaces.UserService;
 import ru.lightcrm.utils.JwtRequest;
 import ru.lightcrm.utils.JwtResponse;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,10 +35,14 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository usersRepository;
-    private final ProfileRepository profileRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
+    private ProfileService profileService;
 
+    @Autowired
+    public void setProfileService(ProfileService profileService) {
+        this.profileService = profileService;
+    }
 
     @Override
     public User getByUsername(String username) {
@@ -67,26 +76,18 @@ public class UserServiceImpl implements UserService {
     }
 
     private Collection<? extends GrantedAuthority> getGrantedAuthorities(Set<String> priorities) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String priority : priorities) {
-            authorities.add(new SimpleGrantedAuthority(priority));
-        }
-        return authorities;
+        return priorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     private Set<String> getPriorities(User user) {
-        Set<String> priorities = new HashSet<>();
-        Set<Priority> collection = user.getPriorities();
-        Profile profile = profileRepository.findByLogin(user.getLogin())
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Профиль пользователя '%s' не найден", user.getLogin())));
-        Collection<Role> roles = profile.getStaffUnit().getRoles();
-        for (Role role : roles) {
-            collection.addAll(role.getPriorities());
-        }
-        for (Priority priority : collection) {
-            priorities.add(priority.getName());
-        }
-        return priorities;
+        Set<String> priorityNames = user.getPriorities().stream()
+                .map(Priority::getName)
+                .collect(Collectors.toSet());
+        priorityNames.addAll(profileService.findByUserLogin(user.getLogin()).getStaffUnit().getRoles().stream()
+                .flatMap(role -> role.getPriorities().stream())
+                .map(Priority::getName)
+                .collect(Collectors.toSet()));
+        return priorityNames;
     }
 
     public JwtResponse createAuthToken(JwtRequest jwtRequest) {
@@ -101,7 +102,7 @@ public class UserServiceImpl implements UserService {
                 new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(),
                         jwtRequest.getPassword()));
         UserDetails userDetails = loadUserByUsername(username);
-        Profile profile = profileRepository.findByLogin(username).orElseThrow(() -> new ResourceNotFoundException(String.format("Профиль пользователя '%s' не найден", username)));
+        Profile profile = profileService.findByUserLogin(username);
         String token = jwtTokenUtil.generateToken(userDetails, profile.getId());
         log.info("Successfully created token for user login {}", username);
         return new JwtResponse(token);

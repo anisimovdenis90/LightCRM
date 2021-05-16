@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @JsonRootName("ProfileMiniDto")
 public class ProfileMiniDto {
 
-    @Min(1)
+    @Min(value = 1, message = "Уникальный идентификатор не может быть меньше 1")
     @ApiModelProperty(notes = "Уникальный идентификатор профиля", dataType = "Long", example = "1", required = true, position = 1)
     @JsonProperty("id")
     private Long id;

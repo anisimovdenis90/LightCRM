@@ -3,6 +3,7 @@ package ru.lightcrm.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -12,5 +13,5 @@ import java.util.List;
 @NoRepositoryBean
 public interface SearchableEntityRepository<T, ID> extends JpaRepository<T, ID> {
 
-    List<T> searchBySearchIndexLike(String searchIndex);
+    List<T> searchBySearchIndexLike(@NotNull String searchIndex);
 }

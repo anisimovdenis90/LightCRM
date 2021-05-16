@@ -13,7 +13,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
     @Override
-    public Comment findEntityById(Long id) {
+    public Comment findById(Long id) {
         return commentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Комментарий с Id %s не найден.", id)));
     }

@@ -26,10 +26,12 @@ public interface ProfileService {
     ProfileMiniDto findMiniDtoByUserLogin(String name);
     List<ProfileMiniDto> findMiniDtoAll();
 
-    ProfileDto findByLogin(String login);
+    ProfileDto findDtoByLogin(String login);
 
     void saveProfile(Profile profile);
 
     void saveNewUser(SystemUserDto systemUserDto, BindingResult bindingResult);
+
+    <P extends ProfileMiniDto> void updateProfile(P dto, BindingResult bindingResult);
 
 }

@@ -9,9 +9,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ru.lightcrm.entities.Priority;
 import ru.lightcrm.entities.Profile;
-import ru.lightcrm.entities.Role;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.Set;
@@ -35,19 +35,24 @@ public class ProfileDto extends ProfileMiniDto {
     @JsonProperty("userLogin")
     private String userLogin;
 
-    @ApiModelProperty(notes = "Список прав сотрудника", dataType = "List<String>", required = true, position = 9)
+    @ApiModelProperty(notes = "Список прав сотрудника", dataType = "Set<PriorityDto>", required = true, position = 9)
     @JsonProperty("priorities")
-    private Set<String> priorities;
+    private Set<PriorityDto> priorities;
 
     // StaffUnit
+    @NotNull
     @Min(1)
     @ApiModelProperty(notes = "Уникальный идентификатор должности, занимаемой сотрудником", dataType = "Long", example = "1", required = true, position = 10)
     @JsonProperty("staffUnitId")
     private Long staffUnitId;
 
-    @ApiModelProperty(notes = "Список ролей сотрудника", dataType = "List<String>", required = true, position = 11)
+    @ApiModelProperty(notes = "Список ролей сотрудника", dataType = "Set<RoleDto>", required = true, position = 11)
     @JsonProperty("roles")
-    private Set<String> roles;
+    private Set<RoleDto> roles;
+
+    @ApiModelProperty(notes = "Список базовых прав доступа", dataType = "Set<PriorityDto>", required = true, position = 12)
+    @JsonProperty("basePriorities")
+    private Set<PriorityDto> basePriorities;
 
     public ProfileDto(Profile profile) {
         super(profile);
@@ -55,14 +60,20 @@ public class ProfileDto extends ProfileMiniDto {
         this.userId = profile.getUser().getId();
         this.userLogin = profile.getUser().getLogin();
         this.priorities = profile.getUser().getPriorities() != null
-                ? profile.getUser().getPriorities().stream().map(Priority::getName).collect(Collectors.toSet())
+                ? profile.getUser().getPriorities().stream().map(PriorityDto::new).collect(Collectors.toSet())
                 : Collections.emptySet();
         // StaffUnit
         this.staffUnitId = profile.getStaffUnit() != null
                 ? profile.getStaffUnit().getId()
                 : null;
         this.roles = profile.getStaffUnit() != null
-                ? profile.getStaffUnit().getRoles().stream().map(Role::getName).collect(Collectors.toSet())
+                ? profile.getStaffUnit().getRoles().stream().map(RoleDto::new).collect(Collectors.toSet())
+                : Collections.emptySet();
+        this.basePriorities = profile.getStaffUnit() != null
+                ? profile.getStaffUnit().getRoles().stream()
+                .flatMap(role -> role.getPriorities().stream())
+                .map(PriorityDto::new)
+                .collect(Collectors.toSet())
                 : Collections.emptySet();
     }
 }

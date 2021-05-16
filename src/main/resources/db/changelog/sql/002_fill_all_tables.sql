@@ -9,7 +9,7 @@ VALUES
 ('CHANGE_PROFILE', 'Изменение профиля'),
 ('DELETE_PROFILE', 'Удаление профиля'),
 --
-('ADD_TASK', 'Создание задачи '),
+('ADD_TASK', 'Создание задачи'),
 ('READ_TASK', 'Просмотр задачи'),
 ('CHANGE_TASK', 'Изменение задачи'),
 ('DELETE_TASK', 'Удаление задачи'),
@@ -57,7 +57,7 @@ VALUES
 ('ROLE_ONLY_READ', 'Только чтение'),--зарегистрированный только чтение
 ('ROLE_MANAGER', 'Менеджер'),
 ('ROLE_PROJECT_MANAGER', 'Менеджер проекта'),
-('ROLE_HEAD_OF_DEPARTMENT', 'Начльник отдела'),
+('ROLE_HEAD_OF_DEPARTMENT', 'Начальник отдела'),
 ('ROLE_HEAD_OF_COMPANY', 'Руководитель организации');
 
 --роли и доступы

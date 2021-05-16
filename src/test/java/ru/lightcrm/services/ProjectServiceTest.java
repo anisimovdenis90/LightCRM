@@ -65,7 +65,7 @@ public class ProjectServiceTest {
 
     @Test
     public void findAll() {
-        List<ProjectDto> projectDTOList = projectService.findAll(new HashMap<>());
+        List<ProjectDto> projectDTOList = projectService.findDtoAll(new HashMap<>());
         Assertions.assertNotNull(projectDTOList);
         Assertions.assertEquals(PROJECT_COUNT, projectDTOList.size());
         Assertions.assertEquals(PROJECT_NAME + " 1", projectDTOList.get(0).getName());
@@ -75,7 +75,7 @@ public class ProjectServiceTest {
     @Test
     public void findById() {
         Long id = 1L;
-        ProjectDto projectDTO = projectService.findById(id);
+        ProjectDto projectDTO = projectService.findDtoById(id);
         Assertions.assertNotNull(projectDTO);
         Assertions.assertEquals(PROJECT_NAME + " " + id, projectDTO.getName());
         Assertions.assertEquals(PROJECT_DESCRIPTION + " " + id, projectDTO.getDescription());
@@ -87,7 +87,7 @@ public class ProjectServiceTest {
         Long id = 1L;
         final String name = PROJECT_NAME + " " + id;
 
-        ProjectDto projectDTO = projectService.findOneByName(name);
+        ProjectDto projectDTO = projectService.findDtoByName(name);
         Assertions.assertNotNull(projectDTO);
         Assertions.assertEquals(id, projectDTO.getId());
         Assertions.assertEquals(PROJECT_DESCRIPTION + " " + id, projectDTO.getDescription());
@@ -98,7 +98,7 @@ public class ProjectServiceTest {
     public void findByManagerId() {
         Long id = 1L;
 
-        List<ProjectDto> projectDTOList = projectService.findByManagerId(id);
+        List<ProjectDto> projectDTOList = projectService.findDtoByManagerId(id);
         Assertions.assertNotNull(projectDTOList);
         Assertions.assertEquals(PROJECT_COUNT, projectDTOList.size());
         for(int i = 0; i < PROJECT_COUNT; i++)
@@ -109,9 +109,9 @@ public class ProjectServiceTest {
     public void deleteByIdTest() {
         Long id = 3L;
 
-        Assertions.assertEquals(PROJECT_COUNT, projectService.findAll(new HashMap<>()).size());
+        Assertions.assertEquals(PROJECT_COUNT, projectService.findDtoAll(new HashMap<>()).size());
         projectService.deleteById(id);
-        Assertions.assertEquals(PROJECT_COUNT - 1, projectService.findAll(null).size());
+        Assertions.assertEquals(PROJECT_COUNT - 1, projectService.findDtoAll(null).size());
     }
 
     @Test

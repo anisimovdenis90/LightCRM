@@ -14,7 +14,6 @@ import ru.lightcrm.entities.dtos.TaskDto;
 import ru.lightcrm.services.interfaces.TaskService;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -88,7 +87,7 @@ public class TaskControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void getAllTasksTest() throws Exception{
-        given(taskService.findAll(new HashMap<>(), null)).willReturn(testListTaskDto);
+        given(taskService.findDtoAll(new HashMap<>(), null)).willReturn(testListTaskDto);
 
         mvc.perform(get("/api/v1/tasks")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -105,7 +104,7 @@ public class TaskControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void getTaskByIdTest() throws Exception{
-        given(taskService.findById(1L)).willReturn(testTaskDto);
+        given(taskService.findDtoById(1L)).willReturn(testTaskDto);
 
         mvc.perform(get("/api/v1/tasks/1")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -120,7 +119,7 @@ public class TaskControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void saveTaskTest() throws Exception {
-        given(taskService.saveOrUpdate(testNewTaskDto)).willReturn(testReturnedNewTaskDto);
+        given(taskService.saveOrUpdateFromDto(testNewTaskDto)).willReturn(testReturnedNewTaskDto);
 
         String json = "{ \"title\": \"" + testNewTaskDto.getTitle() + "\", " +
                 "\"description\" : \"" + testNewTaskDto.getDescription() + "\", " +
@@ -144,7 +143,7 @@ public class TaskControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void updateTaskTest() throws Exception {
-        given(taskService.saveOrUpdate(testModifyTaskDto)).willReturn(testModifyTaskDto);
+        given(taskService.saveOrUpdateFromDto(testModifyTaskDto)).willReturn(testModifyTaskDto);
 
         String json = "{ \"id\" : " + testModifyTaskDto.getId() + ", " +
                 "\"title\": \"" + testModifyTaskDto.getTitle() + "\", " +

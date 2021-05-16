@@ -59,7 +59,7 @@ public class CompanyDto {
     @JsonProperty("comments")
     private Set<CommentDto> comments;
 
-    @ApiModelProperty(notes = "Количество прикрепленнх задач", position = 11)
+    @ApiModelProperty(notes = "Количество прикрепленных задач", position = 11)
     @JsonProperty("tasksCount")
     private Integer tasksCount;
 

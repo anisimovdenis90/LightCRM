@@ -1,6 +1,7 @@
 package ru.lightcrm.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -24,7 +25,12 @@ import java.util.stream.Collectors;
 public class WorkingDayServiceImpl implements WorkingDayService {
 
     private final WorkingDayRepository workingDayRepository;
-    private final ProfileService profileService;
+    private ProfileService profileService;
+
+    @Autowired
+    public void setProfileService(ProfileService profileService) {
+        this.profileService = profileService;
+    }
 
     @Override
     public WorkingDay findById(Long id) {
@@ -66,7 +72,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
             wdFromDb.setEndTimeStamp(workingDayCreationDto.getStartTimeStamp());
             workingDayRepository.save(wdFromDb);
         } else {
-            throw new ValidationException(String.format("Рабочий с датой: %s уже начат для пользователя с id: %d. Нет прав на редактирование", workingDayStartDate, workingDayCreationDto.getProfileId()));
+            throw new ValidationException(String.format("Рабочий с датой: %s для пользователя с id: %d уже начат. Нет прав на редактирование", workingDayStartDate, workingDayCreationDto.getProfileId()));
         }
     }
 

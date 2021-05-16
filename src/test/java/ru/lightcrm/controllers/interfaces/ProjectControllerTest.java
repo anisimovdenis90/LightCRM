@@ -84,7 +84,7 @@ public class ProjectControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void getAllProjectsTest() throws Exception{
-        given(projectService.findAll(new HashMap<>())).willReturn(testListProjectDto);
+        given(projectService.findDtoAll(new HashMap<>())).willReturn(testListProjectDto);
 
         mvc.perform(get("/api/v1/projects")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -100,7 +100,7 @@ public class ProjectControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void getProjectByIdTest() throws Exception{
-        given(projectService.findById(1L)).willReturn(testProjectDto);
+        given(projectService.findDtoById(1L)).willReturn(testProjectDto);
 
         mvc.perform(get("/api/v1/projects/1")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -113,7 +113,7 @@ public class ProjectControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void saveProjectTest() throws Exception {
-        given(projectService.saveOrUpdate(testNewProjectDto)).willReturn(testReturnedNewProjectDto);
+        given(projectService.saveOrUpdateFromDto(testNewProjectDto)).willReturn(testReturnedNewProjectDto);
 
         String json = "{ \"name\": \"" + testNewProjectDto.getName() + "\", " +
                 "\"description\" : \"" + testNewProjectDto.getDescription() + "\", " +
@@ -130,7 +130,7 @@ public class ProjectControllerTest {
     @Test
     @WithMockUser(username = "Bob", authorities = "ADMIN")
     public void updateProjectTest() throws Exception {
-        given(projectService.saveOrUpdate(testModifyProjectDto)).willReturn(testModifyProjectDto);
+        given(projectService.saveOrUpdateFromDto(testModifyProjectDto)).willReturn(testModifyProjectDto);
 
         String json = "{ \"id\" : " + testModifyProjectDto.getId() + ", " +
                 "\"name\": \"" + testProjectDto.getName() + " MODIFIED" + "\", " +

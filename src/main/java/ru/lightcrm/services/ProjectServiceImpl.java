@@ -1,6 +1,6 @@
 package ru.lightcrm.services;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.lightcrm.entities.Profile;
@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
     private ProfileService profileService;
     private TaskService taskService;
 
@@ -31,41 +31,36 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Autowired
-    public void setProjectRepository(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
-    }
-
-    @Autowired
     public void setProfileService(ProfileService profileService) {
         this.profileService = profileService;
     }
 
     @Override
-    public List<ProjectDto> findAll(Map<String, String> params) {
+    public List<ProjectDto> findDtoAll(Map<String, String> params) {
         ProjectFilter projectFilter = new ProjectFilter(params);
         return projectRepository.findAll(projectFilter.getSpecification()).stream().map(ProjectDto::new).collect(Collectors.toList());
     }
 
     @Override
-    public Project findEntityById(Long id) {
+    public Project findById(Long id) {
         return projectRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Проект с id = %s не найден", id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Проект с id = %s не найден", id)));
     }
 
     @Override
-    public ProjectDto findById(Long id) {
+    public ProjectDto findDtoById(Long id) {
         return new ProjectDto(projectRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(String.format("Проект с id = %s не найден", id))));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Проект с id = %s не найден", id))));
     }
 
     @Override
-    public ProjectDto findOneByName(String name) {
+    public ProjectDto findDtoByName(String name) {
         return new ProjectDto(projectRepository.findOneByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Проект с наименованием = \"%s\" не найден", name))));
     }
 
     @Override
-    public List<ProjectDto> findByManagerId(Long id) {
+    public List<ProjectDto> findDtoByManagerId(Long id) {
         return projectRepository.findByManagerId(id).stream().map(ProjectDto::new).collect(Collectors.toList());
     }
 
@@ -75,7 +70,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectDto saveOrUpdate(ProjectDto projectDto) {
+    public ProjectDto saveOrUpdateFromDto(ProjectDto projectDto) {
         Project project;
         if (projectDto.getId() == null) {
             project = new Project();
@@ -97,8 +92,8 @@ public class ProjectServiceImpl implements ProjectService {
 
         List<Task> tasks = null;
         if (projectDto.getTasks() != null) {
-             tasks = projectDto.getTasks().stream()
-                    .map(taskDto -> taskService.findEntityById(taskDto.getId()))
+            tasks = projectDto.getTasks().stream()
+                    .map(taskDto -> taskService.findById(taskDto.getId()))
                     .collect(Collectors.toList());
         }
         project.setTasks(tasks);

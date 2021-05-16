@@ -1,16 +1,21 @@
 package ru.lightcrm.services;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import ru.lightcrm.entities.*;
+import ru.lightcrm.entities.Comment;
+import ru.lightcrm.entities.Profile;
+import ru.lightcrm.entities.Project;
+import ru.lightcrm.entities.Task;
 import ru.lightcrm.entities.dtos.TaskDto;
 import ru.lightcrm.exceptions.ResourceNotFoundException;
 import ru.lightcrm.repositories.TaskRepository;
 import ru.lightcrm.services.filters.TaskFilter;
-import ru.lightcrm.services.interfaces.*;
+import ru.lightcrm.services.interfaces.ProfileService;
+import ru.lightcrm.services.interfaces.ProjectService;
+import ru.lightcrm.services.interfaces.TaskService;
+import ru.lightcrm.services.interfaces.TaskStateService;
 
 import java.util.List;
 import java.util.Map;
@@ -18,18 +23,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
     private ProfileService profileService;
     private TaskStateService taskStateService;
     private ProjectService projectService;
     private CommentServiceImpl commentService;
-
-    @Autowired
-    public void setTaskRepository(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
 
     @Autowired
     public void setProfileService(ProfileService profileService) {
@@ -52,53 +52,52 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto> findAll(Map<String, String> params, @Nullable List<Long> taskStatesId) {
+    public List<TaskDto> findDtoAll(Map<String, String> params, @Nullable List<Long> taskStatesId) {
         TaskFilter taskFilter = new TaskFilter(params, taskStatesId);
         return taskRepository.findAll(taskFilter.getSpec()).stream().map(TaskDto::new).collect(Collectors.toList());
     }
 
     @Override
-    public Task findEntityById(Long id) {
+    public Task findById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Задача с id = %s не найден", id)));
     }
 
     @Override
-    public TaskDto findById(Long id) {
-        return new TaskDto(taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Задача с id = %s не найдена", id))));
+    public TaskDto findDtoById(Long id) {
+        return new TaskDto(findById(id));
     }
 
     @Override
-    public TaskDto findOneByTitle(String title) {
+    public TaskDto findDtoByTitle(String title) {
         return new TaskDto(taskRepository.findOneByTitle(title)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Задача с наименованием = \"%s\" не найдена", title))));
     }
 
     @Override
-    public List<TaskDto> findByProducerId(Long id) {
+    public List<TaskDto> findDtoByProducerId(Long id) {
         return taskRepository.findByProducerId(id).stream().map(TaskDto::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<TaskDto> findByProducerIdAndTaskStateId(Long producerId, Long taskStateId) {
+    public List<TaskDto> findDtoByProducerIdAndTaskStateId(Long producerId, Long taskStateId) {
         return taskRepository.findByProducerIdAndTaskStateId(producerId, taskStateId).stream()
-                            .map(TaskDto::new).collect(Collectors.toList());
+                .map(TaskDto::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<TaskDto> findByResponsibleId(Long id) {
+    public List<TaskDto> findDtoByResponsibleId(Long id) {
         return taskRepository.findByResponsibleId(id).stream().map(TaskDto::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<TaskDto> findByResponsibleIdAndTaskStateId(Long responsibleId, Long taskStateId) {
+    public List<TaskDto> findDtoByResponsibleIdAndTaskStateId(Long responsibleId, Long taskStateId) {
         return taskRepository.findByResponsibleIdAndTaskStateId(responsibleId, taskStateId).stream()
-                            .map(TaskDto::new).collect(Collectors.toList());
+                .map(TaskDto::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<TaskDto> findByProjectId(Long id) {
+    public List<TaskDto> findDtoByProjectId(Long id) {
         return taskRepository.findByProjectId(id).stream().map(TaskDto::new).collect(Collectors.toList());
     }
 
@@ -113,7 +112,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDto saveOrUpdate(TaskDto taskDto) {
+    public TaskDto saveOrUpdateFromDto(TaskDto taskDto) {
         Task task;
         if (taskDto.getId() == null) {
             task = new Task();
@@ -134,7 +133,7 @@ public class TaskServiceImpl implements TaskService {
 
         Project project = null;
         if (taskDto.getProjectId() != null) {
-            project = projectService.findEntityById(taskDto.getProjectId());
+            project = projectService.findById(taskDto.getProjectId());
         }
         task.setProject(project);
 
@@ -157,7 +156,7 @@ public class TaskServiceImpl implements TaskService {
         Set<Comment> comments = null;
         if (taskDto.getComments() != null) {
             comments = taskDto.getComments().stream()
-                    .map(c -> commentService.findEntityById(c.getId()))
+                    .map(c -> commentService.findById(c.getId()))
                     .collect(Collectors.toSet());
         }
         task.setComments(comments);

@@ -59,7 +59,6 @@ public class UserServiceTest {
         priority.setId(1L);
         priority.setName("TEST");
         priority.setVisibleName("Тест");
-        priority.setRoles(null);
         Set<Priority> priorities = new HashSet<>(1);
         priorities.add(priority);
         user.setId(1L);

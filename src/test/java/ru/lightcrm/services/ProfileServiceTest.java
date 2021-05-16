@@ -8,13 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import ru.lightcrm.entities.*;
+import ru.lightcrm.entities.Department;
+import ru.lightcrm.entities.Profile;
+import ru.lightcrm.entities.StaffUnit;
+import ru.lightcrm.entities.User;
 import ru.lightcrm.entities.dtos.ProfileDto;
 import ru.lightcrm.entities.dtos.ProfileFullDto;
 import ru.lightcrm.repositories.ProfileRepository;
 import ru.lightcrm.services.interfaces.ProfileService;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -43,11 +45,6 @@ public class ProfileServiceTest {
         testStaff.setId(1L);
         testStaff.setName("TEST_STAFF");
         testStaff.setRoles(Collections.EMPTY_SET);
-        Company testCompany = new Company();
-        testCompany.setId(1L);
-        testCompany.setName("TEST_COMPANY");
-        List<Company> companies = new ArrayList<>(1);
-        companies.add(testCompany);
         Department testDepartment = new Department();
         testDepartment.setId(1L);
         testDepartment.setName("TEST_DEPARTMENT");
@@ -61,7 +58,6 @@ public class ProfileServiceTest {
         testProfile.setSex("M");
         testProfile.setUser(testUser);
         testProfile.setStaffUnit(testStaff);
-        testProfile.setCompanies(companies);
         testProfile.setManagedDepartments(Collections.singletonList(testDepartment));
         testProfile.setDepartments(Collections.singletonList(testDepartment));
         testProfileList = List.of(testProfile);
@@ -92,7 +88,6 @@ public class ProfileServiceTest {
 
         Assertions.assertNotNull(profileFullDto);
         Assertions.assertEquals(testProfile.getUser().getLogin(), profileFullDto.getUserLogin());
-        Assertions.assertEquals(testProfile.getCompanies().get(0).getName(), profileFullDto.getCompanyNames().get(0));
         Assertions.assertEquals(testProfile.getDepartments().get(0).getName(), profileFullDto.getManagedDepartments().get(0).getName());
         Mockito.verify(profileRepository, Mockito.times(1)).findById(testProfile.getId());
     }
@@ -124,7 +119,6 @@ public class ProfileServiceTest {
         Assertions.assertNotNull(profileFullDtos);
         Assertions.assertEquals(testProfileList.size(), profileFullDtos.size());
         Assertions.assertEquals(testProfileList.get(0).getUser().getLogin(), profileFullDtos.get(0).getUserLogin());
-        Assertions.assertEquals(testProfileList.get(0).getCompanies().get(0).getName(), profileFullDtos.get(0).getCompanyNames().get(0));
         Assertions.assertEquals(testProfileList.get(0).getDepartments().get(0).getName(), profileFullDtos.get(0).getManagedDepartments().get(0).getName());
         Mockito.verify(profileRepository, Mockito.times(1)).findAll();
     }

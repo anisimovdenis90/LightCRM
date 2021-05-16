@@ -2,6 +2,7 @@ package ru.lightcrm.entities;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "staff_units")
 public class StaffUnit extends BaseEntity {
 

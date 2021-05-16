@@ -95,7 +95,7 @@ class CompanyServiceTest {
         Long id = 1L;
         final String name = COMPANY_NAME + " " + id;
 
-        CompanyDto companyDto = companyService.findByName(name);
+        CompanyDto companyDto = companyService.findDtoByName(name);
         Assertions.assertNotNull(companyDto);
         Assertions.assertEquals(id, companyDto.getId());
         Assertions.assertEquals(COMPANY_NAME + " " + id, companyDto.getName());
@@ -112,7 +112,7 @@ class CompanyServiceTest {
     void findByInn() {
         Long id = 1L;
 
-        CompanyDto companyDto = companyService.findByInn(COMPANY_INN);
+        CompanyDto companyDto = companyService.findDtoByInn(COMPANY_INN);
         Assertions.assertNotNull(companyDto);
         Assertions.assertEquals(id, companyDto.getId());
         Assertions.assertEquals(COMPANY_NAME + " " + id, companyDto.getName());
@@ -129,7 +129,7 @@ class CompanyServiceTest {
     void findById() {
         Long id = 1L;
 
-        CompanyDto companyDto = companyService.findById(id);
+        CompanyDto companyDto = companyService.findDtoById(id);
         Assertions.assertNotNull(companyDto);
         Assertions.assertEquals(id, companyDto.getId());
         Assertions.assertEquals(COMPANY_NAME + " " + id, companyDto.getName());
@@ -144,7 +144,7 @@ class CompanyServiceTest {
 
     @Test
     void findAllDTO() {
-        List<CompanyDto> companyDtoList = companyService.findAllDTO();
+        List<CompanyDto> companyDtoList = companyService.findDtoAll();
         Assertions.assertNotNull(companyDtoList);
         Assertions.assertEquals(COMPANY_COUNT, companyDtoList.size());
         Assertions.assertEquals(COMPANY_NAME + " 1", companyDtoList.get(0).getName());
@@ -154,9 +154,9 @@ class CompanyServiceTest {
     void deleteTest() {
         Long id = 1L;
 
-        Assertions.assertEquals(COMPANY_COUNT, companyService.findAllDTO().size());
+        Assertions.assertEquals(COMPANY_COUNT, companyService.findDtoAll().size());
         companyService.deleteById(id);
-        Assertions.assertEquals(COMPANY_COUNT - 1, companyService.findAllDTO().size());
+        Assertions.assertEquals(COMPANY_COUNT - 1, companyService.findDtoAll().size());
     }
 
     @Test

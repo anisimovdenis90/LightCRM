@@ -8,27 +8,27 @@ import java.util.List;
 import java.util.Map;
 
 public interface TaskService {
-    List<TaskDto> findAll(Map<String, String> params, @Nullable List<Long> taskStatesId);
+    List<TaskDto> findDtoAll(Map<String, String> params, @Nullable List<Long> taskStatesId);
 
-    TaskDto findById(Long id);
+    TaskDto findDtoById(Long id);
 
-    Task findEntityById(Long id);
+    Task findById(Long id);
 
-    TaskDto findOneByTitle(String title);
+    TaskDto findDtoByTitle(String title);
 
-    List<TaskDto> findByProducerId(Long id);
+    List<TaskDto> findDtoByProducerId(Long id);
 
-    List<TaskDto> findByProducerIdAndTaskStateId(Long producerId, Long taskStateId);
+    List<TaskDto> findDtoByProducerIdAndTaskStateId(Long producerId, Long taskStateId);
 
-    List<TaskDto> findByResponsibleId(Long id);
+    List<TaskDto> findDtoByResponsibleId(Long id);
 
-    List<TaskDto> findByResponsibleIdAndTaskStateId(Long responsibleId, Long taskStateId);
+    List<TaskDto> findDtoByResponsibleIdAndTaskStateId(Long responsibleId, Long taskStateId);
 
-    List<TaskDto> findByProjectId(Long id);
+    List<TaskDto> findDtoByProjectId(Long id);
 
     Integer countByCompanyId(Long id);
 
-    TaskDto saveOrUpdate(TaskDto taskDto);
+    TaskDto saveOrUpdateFromDto(TaskDto taskDto);
 
     void deleteById(Long id);
 }

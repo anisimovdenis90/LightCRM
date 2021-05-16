@@ -2,12 +2,16 @@ CREATE TABLE users (
     id                  BIGSERIAL PRIMARY KEY,
     login               VARCHAR(50) UNIQUE,
     password            VARCHAR(255) NOT NULL,
-    enabled             BOOLEAN DEFAULT TRUE
+    enabled             BOOLEAN DEFAULT TRUE,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE staff_units (
     id                  BIGSERIAL PRIMARY KEY,
-    name                VARCHAR(50) NOT NULL
+    name                VARCHAR(50) NOT NULL,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE file_infos (
@@ -16,7 +20,9 @@ CREATE TABLE file_infos (
     type                VARCHAR(50),
     size                BIGINT,
     key_name            VARCHAR(255),
-    upload_date         TIMESTAMP
+    upload_date         TIMESTAMP,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE profiles (
@@ -32,6 +38,8 @@ CREATE TABLE profiles (
     birthdate           DATE,
     employment_date     DATE,
     dismissal_date      DATE,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP,
     user_id             BIGINT REFERENCES users(id),
     staff_unit_id       BIGINT REFERENCES staff_units(id),
     photo_id            BIGINT REFERENCES file_infos(id),
@@ -42,6 +50,8 @@ CREATE TABLE departments (
     id                  BIGSERIAL PRIMARY KEY,
     name                VARCHAR(50),
     description         VARCHAR(255),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP,
     leader_id           BIGINT REFERENCES profiles(id),
     lead_department_id  BIGINT
 );
@@ -62,11 +72,13 @@ CREATE TABLE companies (
     bill_number         BIGINT,
     phone_number        VARCHAR(50),
     email               VARCHAR(50),
-    search_index            TEXT
+    search_index        TEXT,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE companies_managers (
-    profile_id          BIGINT NOT NULL,
+    profile_id       BIGINT NOT NULL,
     company_id       BIGINT NOT NULL,
     PRIMARY KEY (profile_id, company_id),
     FOREIGN KEY (profile_id) REFERENCES profiles(id),
@@ -81,6 +93,8 @@ CREATE TABLE contacts (
     email               VARCHAR(50),
     description         VARCHAR(255),
     search_index        TEXT,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP,
     company_id          BIGINT REFERENCES companies(id)
 );
 
@@ -88,20 +102,26 @@ CREATE TABLE comments (
     id                  BIGSERIAL PRIMARY KEY,
     author_id           BIGINT REFERENCES profiles(id),
     created_date        TIMESTAMP,
-    text                VARCHAR(255)
+    text                VARCHAR(255),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE projects (
     id                  BIGSERIAL PRIMARY KEY,
     name                VARCHAR(50),
     description         VARCHAR(255),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP,
     manager_id          BIGINT REFERENCES profiles(id),
     company_id          BIGINT REFERENCES companies(id)
 );
 
 CREATE TABLE task_states (
     id                  BIGSERIAL PRIMARY KEY,
-    name                VARCHAR(50)
+    name                VARCHAR(50),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE tasks (
@@ -119,6 +139,8 @@ CREATE TABLE tasks (
     project_id              BIGINT REFERENCES projects(id),
     expired                 BOOLEAN DEFAULT FALSE,
     company_id              BIGINT REFERENCES companies(id),
+    create_timestamp        TIMESTAMP DEFAULT NOW(),
+    update_timestamp        TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );
 
@@ -148,7 +170,7 @@ CREATE TABLE companies_comments (
 
 CREATE TABLE tasks_comments (
     task_id            BIGINT NOT NULL,
-    comment_id          BIGINT NOT NULL,
+    comment_id         BIGINT NOT NULL,
     PRIMARY KEY (task_id, comment_id),
     FOREIGN KEY (task_id) REFERENCES tasks(id),
     FOREIGN KEY (comment_id) REFERENCES comments(id)
@@ -165,13 +187,17 @@ CREATE TABLE employees_projects (
 CREATE TABLE roles (
     id                  BIGSERIAL PRIMARY KEY,
     name                VARCHAR(50),
-    visible_name        VARCHAR(50)
+    visible_name        VARCHAR(50),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE priorities (
     id                  BIGSERIAL PRIMARY KEY,
     name                VARCHAR(50),
-    visible_name        VARCHAR(50)
+    visible_name        VARCHAR(50),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE roles_priorities (
@@ -200,26 +226,32 @@ CREATE TABLE staff_units_roles (
 
 CREATE TABLE tags (
     id                  BIGSERIAL PRIMARY KEY,
-    name                VARCHAR(200)
+    name                VARCHAR(200),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE chat_message (
-    id              BIGSERIAL PRIMARY KEY,
-    chat_id         VARCHAR(50) NOT NULL,
-    sender_id       BIGINT NOT NULL,
-    recipient_id    BIGINT NOT NULL,
-    sender_name     VARCHAR(25) NOT NULL,
-    recipient_name  VARCHAR(25) NOT NULL,
-    content         TEXT NOT NULL,
-    timestamp       TIMESTAMP NOT NULL,
-    message_status  INTEGER NOT NULL
+    id                  BIGSERIAL PRIMARY KEY,
+    chat_id             VARCHAR(50) NOT NULL,
+    sender_id           BIGINT NOT NULL,
+    recipient_id        BIGINT NOT NULL,
+    sender_name         VARCHAR(25) NOT NULL,
+    recipient_name      VARCHAR(25) NOT NULL,
+    content             TEXT NOT NULL,
+    timestamp           TIMESTAMP NOT NULL,
+    message_status      INTEGER NOT NULL,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE chat_room (
-    id              BIGSERIAL PRIMARY KEY,
-    chat_id         VARCHAR(50) NOT NULL,
-    sender_id       BIGINT NOT NULL,
-    recipient_id    BIGINT NOT NULL
+    id                  BIGSERIAL PRIMARY KEY,
+    chat_id             VARCHAR(50) NOT NULL,
+    sender_id           BIGINT NOT NULL,
+    recipient_id        BIGINT NOT NULL,
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP
 );
 
 CREATE TABLE working_days (
@@ -227,5 +259,7 @@ CREATE TABLE working_days (
     start_timestamp     TIMESTAMP,
     end_timestamp       TIMESTAMP,
     report              VARCHAR(255),
+    create_timestamp    TIMESTAMP DEFAULT NOW(),
+    update_timestamp    TIMESTAMP,
     profile_id          BIGINT REFERENCES profiles(id)
 );

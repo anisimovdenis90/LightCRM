@@ -1,9 +1,6 @@
 package ru.lightcrm.controllers.interfaces;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.lightcrm.annotations.SearchableEntitiesController;
@@ -24,7 +21,7 @@ import java.util.List;
 public interface CompanyController {
 
     @GetMapping()
-    @ApiOperation(value = "Возвращает cписок DTO компаний",
+    @ApiOperation(value = "Возвращает список DTO компаний",
             notes = "Запрос списка компаний",
             httpMethod = "GET"
     )
@@ -35,6 +32,19 @@ public interface CompanyController {
             @ApiResponse(code = 404, message = "Ресурс не найден")
     })
     List<CompanyDto> getCompanyContent();
+
+    @GetMapping(value = "/manager/{id}")
+    @ApiOperation(value = "Возвращает список, курируемых указанным менеджером",
+            notes = "Запрос списка компаний",
+            httpMethod = "GET"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", response = CompanyDto.class, responseContainer = "List"),
+            @ApiResponse(code = 401, message = "Клиент не авторизован"),
+            @ApiResponse(code = 403, message = "Нет прав"),
+            @ApiResponse(code = 404, message = "Ресурс не найден")
+    })
+    List<CompanyDto> getManagedCompanies(@ApiParam(value = "Уникальный идентификатор менеджера", name = "id", required = true, example = "1") @PathVariable Long id);
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Возвращает DTO компании по Id",
@@ -47,7 +57,7 @@ public interface CompanyController {
             @ApiResponse(code = 403, message = "Нет прав"),
             @ApiResponse(code = 404, message = "Ресурс не найден")
     })
-    CompanyDto getCompany(@PathVariable Long id);
+    CompanyDto getCompany(@ApiParam(value = "Уникальный идентификатор компании", name = "id", required = true, example = "1") @PathVariable Long id);
 
     @PostMapping
     @ApiOperation(value = "Возвращает DTO созданной компании",
@@ -63,7 +73,7 @@ public interface CompanyController {
     CompanyDto saveCompany(@RequestBody CompanyDto companyDto);
 
     @DeleteMapping(value = "/{id}")
-    @ApiOperation(value = "Возращает статус-код операции",
+    @ApiOperation(value = "Возвращает статус-код операции",
             notes = "Удаление компании",
             httpMethod = "DELETE"
     )
@@ -73,11 +83,11 @@ public interface CompanyController {
             @ApiResponse(code = 403, message = "Нет прав"),
             @ApiResponse(code = 404, message = "Ресурс не найден")
     })
-    void delete(@PathVariable Long id);
+    void delete(@ApiParam(value = "Уникальный идентификатор компании", name = "id", required = true, example = "1") @PathVariable Long id);
 
     @PutMapping
     @ApiOperation(value = "Возвращает DTO измененной компании",
-            notes = "Изменение существуюшей компании",
+            notes = "Изменение существую шей компании",
             httpMethod = "PUT"
     )
     @ApiResponses(value = {
@@ -89,7 +99,7 @@ public interface CompanyController {
     CompanyDto updateCompany(@RequestBody CompanyDto companyDto);
 
     @DeleteMapping(value = "/contact/{id}")
-    @ApiOperation(value = "Возращает статус-код операции",
+    @ApiOperation(value = "Возвращает статус-код операции",
             notes = "Удаление контакта",
             httpMethod = "DELETE"
     )
@@ -99,11 +109,11 @@ public interface CompanyController {
             @ApiResponse(code = 403, message = "Нет прав"),
             @ApiResponse(code = 404, message = "Ресурс не найден")
     })
-    void deleteContact(@PathVariable Long id);
+    void deleteContact(@ApiParam(value = "Уникальный идентификатор контакта", name = "id", required = true, example = "1") @PathVariable Long id);
 
     @PutMapping("/contact")
     @ApiOperation(value = "Возвращает DTO измененной компании",
-            notes = "Изменение существуюшей компании",
+            notes = "Изменение существую шей компании",
             httpMethod = "PUT"
     )
     @ApiResponses(value = {
@@ -116,7 +126,7 @@ public interface CompanyController {
 
     @PostMapping("/contact")
     @ApiOperation(value = "Возвращает DTO измененной компании",
-            notes = "Изменение существуюшей компании",
+            notes = "Изменение существую шей компании",
             httpMethod = "POST"
     )
     @ApiResponses(value = {

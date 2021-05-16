@@ -3,7 +3,9 @@ package ru.lightcrm.entities;
 import lombok.*;
 import ru.lightcrm.utils.MessageStatus;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.OffsetDateTime;
 
 @EqualsAndHashCode(callSuper = true)
@@ -29,7 +31,7 @@ public class ChatMessage extends BaseEntity {
     @Column(name = "recipient_name")
     private String recipientName;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "timestamp")

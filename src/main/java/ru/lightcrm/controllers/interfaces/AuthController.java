@@ -16,7 +16,7 @@ public interface AuthController {
 
   @PostMapping("/auth")
   @ApiOperation(value = " Возвращает JwtResponse с токеном",
-      notes = " Проверяет, что пользователь ранее зарегистриован в приложении и возвращает объект, содержащий токен авторизации",
+      notes = " Проверяет, что пользователь ранее зарегистрирован в приложении и возвращает объект, содержащий токен авторизации",
       httpMethod = "POST"
   )
   @ApiResponses(value = {

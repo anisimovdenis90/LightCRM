@@ -1,16 +1,16 @@
 package ru.lightcrm.entities;
 
-import java.util.Set;
-import javax.persistence.*;
-
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
-// @Data заменил на эти две аннотации - иначе зацикливание
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Table(name = "priorities")
 public class Priority extends BaseEntity {
@@ -20,7 +20,4 @@ public class Priority extends BaseEntity {
 
     @Column(name = "visible_name")
     private String visibleName;
-
-    @ManyToMany(mappedBy = "priorities")
-    private Set<Role> roles;
 }
